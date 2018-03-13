@@ -4,6 +4,7 @@
   "experiment": {
     "base_dir": "/home/jeetkanjani7/Tonbo/SiamFC-TensorFlow", 
     "dependencies": [
+      "Keras==2.1.5", 
       "numpy==1.14.0", 
       "sacred==0.7.2", 
       "tensorflow-gpu==1.5.0"
@@ -18,11 +19,11 @@
       ], 
       [
         "siamese_model.py", 
-        "_sources/siamese_model_d4cb57a78aed039eca89a644edeb3035.py"
+        "_sources/siamese_model_54e90b315327c7c627641cacbbac9499.py"
       ], 
       [
         "train_siamese_model.py", 
-        "_sources/train_siamese_model_aba4d04d529258ab262a70d5ae499fc5.py"
+        "_sources/train_siamese_model_0c45df5adb437cd84ebf82265ee42bce.py"
       ], 
       [
         "utils/__init__.py", 
@@ -37,14 +38,14 @@
   "fail_trace": [
     "Traceback (most recent call last):\n", 
     "  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/sacred/config/captured_function.py\", line 48, in captured_function\n    result = wrapped(*args, **kwargs)\n", 
-    "  File \"experiments/../train_siamese_model.py\", line 104, in main\n    model.build()\n", 
-    "  File \"experiments/../siamese_model.py\", line 210, in build\n    self.build_inputs()\n", 
-    "  File \"experiments/../siamese_model.py\", line 60, in build_inputs\n    self.dataloader = DataLoader(self.data_config, self.is_training())\n", 
-    "  File \"experiments/../datasets/dataloader.py\", line 56, in __init__\n    self.dataset_py = VID(config['input_imdb'], config['max_frame_dist'])\n", 
-    "  File \"experiments/../datasets/vid.py\", line 55, in __init__\n    with open(imdb_path, 'rb') as f:\n", 
-    "IOError: [Errno 2] No such file or directory: 'data/train_imdb.pickle'\n"
+    "  File \"experiments/../train_siamese_model.py\", line 165, in main\n    _, loss, batch_loss = sess.run([train_op, model.total_loss, model.batch_loss])\n", 
+    "  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/tensorflow/python/client/session.py\", line 895, in run\n    run_metadata_ptr)\n", 
+    "  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/tensorflow/python/client/session.py\", line 1128, in _run\n    feed_dict_tensor, options, run_metadata)\n", 
+    "  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/tensorflow/python/client/session.py\", line 1344, in _do_run\n    options, run_metadata)\n", 
+    "  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/tensorflow/python/client/session.py\", line 1363, in _do_call\n    raise type(e)(node_def, op, message)\n", 
+    "InvalidArgumentError: You must feed a value for placeholder tensor 'train/Placeholder_1' with dtype float and shape [?]\n\t [[Node: train/Placeholder_1 = Placeholder[dtype=DT_FLOAT, shape=[?], _device=\"/job:localhost/replica:0/task:0/device:GPU:0\"]()]]\n\nCaused by op u'train/Placeholder_1', defined at:\n  File \"experiments/SiamFC-3s-gray-scratch.py\", line 30, in <module>\n    '--enforce_clean': False,\n  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/sacred/experiment.py\", line 199, in run\n    run()\n  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/sacred/run.py\", line 229, in __call__\n    self.result = self.main_function(*args)\n  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/sacred/config/captured_function.py\", line 48, in captured_function\n    result = wrapped(*args, **kwargs)\n  File \"experiments/../train_siamese_model.py\", line 104, in main\n    model.build()\n  File \"experiments/../siamese_model.py\", line 217, in build\n    self.build_image_embeddings(reuse=reuse)\n  File \"experiments/../siamese_model.py\", line 103, in build_image_embeddings\n    self.instance_embeds, _ = embedding_fn(self.instances, reuse=True)\n  File \"experiments/../siamese_model.py\", line 98, in embedding_fn\n    return convolutional_alexnet(images, reuse=reuse)\n  File \"experiments/../embeddings/convolutional_alexnet.py\", line 112, in convolutional_alexnet\n    X = tf.placeholder(tf.float32, [None])\n  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/tensorflow/python/ops/array_ops.py\", line 1680, in placeholder\n    return gen_array_ops._placeholder(dtype=dtype, shape=shape, name=name)\n  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/tensorflow/python/ops/gen_array_ops.py\", line 3141, in _placeholder\n    \"Placeholder\", dtype=dtype, shape=shape, name=name)\n  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/tensorflow/python/framework/op_def_library.py\", line 787, in _apply_op_helper\n    op_def=op_def)\n  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/tensorflow/python/framework/ops.py\", line 3160, in create_op\n    op_def=op_def)\n  File \"/home/jeetkanjani7/tensorflow/local/lib/python2.7/site-packages/tensorflow/python/framework/ops.py\", line 1625, in __init__\n    self._traceback = self._graph._extract_stack()  # pylint: disable=protected-access\n\nInvalidArgumentError (see above for traceback): You must feed a value for placeholder tensor 'train/Placeholder_1' with dtype float and shape [?]\n\t [[Node: train/Placeholder_1 = Placeholder[dtype=DT_FLOAT, shape=[?], _device=\"/job:localhost/replica:0/task:0/device:GPU:0\"]()]]\n\n"
   ], 
-  "heartbeat": "2018-03-12T18:02:17.960774", 
+  "heartbeat": "2018-03-13T18:08:31.978984", 
   "host": {
     "ENV": {}, 
     "cpu": "Intel(R) Core(TM) i5-7300HQ CPU @ 2.50GHz", 
@@ -90,7 +91,7 @@
   }, 
   "resources": [], 
   "result": null, 
-  "start_time": "2018-03-12T18:02:17.915524", 
+  "start_time": "2018-03-13T18:08:25.612813", 
   "status": "FAILED", 
-  "stop_time": "2018-03-12T18:02:17.962842"
+  "stop_time": "2018-03-13T18:08:31.979970"
 }

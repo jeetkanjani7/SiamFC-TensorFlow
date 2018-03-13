@@ -1,0 +1,2 @@
+INFO - SiamFC-3s-gray-scratch - Running command 'main'
+INFO - SiamFC-3s-gray-scratch - Started run with ID "6"

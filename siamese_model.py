@@ -96,7 +96,9 @@ class SiameseModel:
     def embedding_fn(images, reuse=False):
       with slim.arg_scope(arg_scope):
         return convolutional_alexnet(images, reuse=reuse)
-
+    print("Exempler Size bhenchod: ")
+    print(self.exemplars)
+    print(self.instances)
     self.exemplar_embeds, _ = embedding_fn(self.exemplars, reuse=reuse)
     self.instance_embeds, _ = embedding_fn(self.instances, reuse=True)
 
@@ -109,6 +111,10 @@ class SiameseModel:
       def _translation_match(x, z):  # translation match for one example within a batch
         x = tf.expand_dims(x, 0)  # [1, in_height, in_width, in_channels]
         z = tf.expand_dims(z, -1)  # [filter_height, filter_width, in_channels, 1]
+        print("Shapes bhenchod ...........")
+        print(x.shape)
+        print(z.shape)
+        print("Gaand mariiiii..............")
         return tf.nn.conv2d(x, z, strides=[1, 1, 1, 1], padding='VALID', name='translation_match')
 
       output = tf.map_fn(lambda x: _translation_match(x[0], x[1]),
@@ -128,7 +134,7 @@ class SiameseModel:
   def build_loss(self):
     response = self.response
     response_size = response.get_shape().as_list()[1:3]  # [height, width]
-
+    print("HEIGHT: "+ str(response_size) + ".....................")
     gt = construct_gt_score_maps(response_size,
                                  self.data_config['batch_size'],
                                  self.model_config['embed_config']['stride'],

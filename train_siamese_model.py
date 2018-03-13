@@ -10,7 +10,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
+import keras
 import logging
 import os
 import os.path as osp
@@ -104,14 +104,13 @@ def main(model_config, train_config, track_config):
     model.build()
     model_va = siamese_model.SiameseModel(model_config, train_config, mode='validation')
     model_va.build(reuse=True)
-
+    print("MODEL BUILT SUCCESSFULLY...................")
     # Save configurations for future reference
     save_cfgs(train_dir, model_config, train_config, track_config)
 
     learning_rate = _configure_learning_rate(train_config, model.global_step)
     optimizer = _configure_optimizer(train_config, learning_rate)
     tf.summary.scalar('learning_rate', learning_rate)
-
     # Set up the training ops
     opt_op = tf.contrib.layers.optimize_loss(
       loss=model.total_loss,
@@ -121,7 +120,7 @@ def main(model_config, train_config, track_config):
       clip_gradients=train_config['clip_gradients'],
       learning_rate_decay_fn=None,
       summaries=['learning_rate'])
-
+    print("EVERYTHING FINE TRAINING OPS.........................")
     with tf.control_dependencies([opt_op]):
       train_op = tf.no_op(name='train')
 

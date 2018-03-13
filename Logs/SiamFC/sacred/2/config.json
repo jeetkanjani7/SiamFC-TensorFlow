@@ -19,7 +19,7 @@
     }, 
     "z_image_size": 127
   }, 
-  "seed": 3180641, 
+  "seed": 835005056, 
   "track_config": {
     "include_first": false, 
     "log_dir": "Logs/SiamFC/track_model_inference/SiamFC-3s-gray-scratch", 

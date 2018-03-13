@@ -18,9 +18,9 @@ from __future__ import print_function
 import logging
 
 import tensorflow as tf
-
+from tensorflow.contrib.rnn import LSTMCell, MultiRNNCell
 from utils.misc_utils import get
-
+import math
 slim = tf.contrib.slim
 
 
@@ -109,6 +109,7 @@ def convolutional_alexnet(inputs, reuse=None, scope='convolutional_alexnet'):
     net: the computed features of the inputs.
     end_points: the intermediate outputs of the embedding function.
   """
+  #X = tf.variable(tf.float32, [None])
   with tf.variable_scope(scope, 'convolutional_alexnet', [inputs], reuse=reuse) as sc:
     end_points_collection = sc.name + '_end_points'
     with slim.arg_scope([slim.conv2d, slim.max_pool2d],
@@ -139,7 +140,29 @@ def convolutional_alexnet(inputs, reuse=None, scope='convolutional_alexnet'):
           b1 = slim.conv2d(b1, 128, [3, 3], 1, scope='b1')
           b2 = slim.conv2d(b2, 128, [3, 3], 1, scope='b2')
         net = tf.concat([b1, b2], 3)
+       
+        print("NET SHAPE PREV >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+        print(net.shape)
+      #adding LSTM layer
+      with tf.variable_scope('lstm'):
+       
+        net = tf.reshape(net, [net.shape[1]*net.shape[1], -1, 256])
+
+        tf.transpose(net, [0,2,1])
+        cell = LSTMCell(256, state_is_tuple= True)
+        cell = tf.contrib.rnn.DropoutWrapper(cell=cell, output_keep_prob=0.8)
+        cell1 = tf.contrib.rnn.LSTMCell(256, state_is_tuple=True)
+        cell = tf.contrib.rnn.DropoutWrapper(cell=cell, output_keep_prob=0.8)
+        stack = MultiRNNCell([cell, cell1], state_is_tuple = True)
+        net, states = tf.nn.dynamic_rnn(stack, net, dtype = tf.float32, time_major = True)
+        dim = int(net.shape[0])
+        dim = dim**(1/2)
+        print(dim)
+        net = tf.reshape(net, [int(dim),int(dim),-1, 256])
+        net = tf.transpose(net, [2,0,1,3])
       # Convert end_points_collection into a dictionary of end_points.
+      print("NET SHAPE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+      print(net.shape)
       end_points = slim.utils.convert_collection_to_dict(end_points_collection)
       return net, end_points
 

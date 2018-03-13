@@ -24,7 +24,7 @@ if __name__ == '__main__':
   ex.run(config_updates={'train_config': {'train_data_config': {'preprocessing_name': 'siamese_fc_gray', },
                                           'train_dir': osp.join(LOG_DIR, 'track_model_checkpoints', RUN_NAME), },
                          'track_config': {'log_dir': osp.join(LOG_DIR, 'track_model_inference', RUN_NAME), }
-                         },
+                        },
          options={'--name': RUN_NAME,
                   '--force': True,
                   '--enforce_clean': False,

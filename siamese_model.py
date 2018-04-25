@@ -1,24 +1,18 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# Copyright © 2017 bily     Huazhong University of Science and Technology
-#
-# Distributed under terms of the MIT license.
-
-"""Construct the computational graph of siamese model for training. """
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
 import functools
-
+import scipy
+import matplotlib.pyplot as plt
 import tensorflow as tf
-
+import numpy as np
 from datasets.dataloader import DataLoader
 from embeddings.convolutional_alexnet import convolutional_alexnet_arg_scope, convolutional_alexnet
 from metrics.track_metrics import center_dist_error, center_score_error
 from utils.train_utils import construct_gt_score_maps, load_mat_model
+from tensorflow.contrib.rnn import LSTMCell, MultiRNNCell
+from cell import ConvLSTMCell
 
 slim = tf.contrib.slim
 
@@ -43,7 +37,7 @@ class SiameseModel:
     self.total_loss = None
     self.init_fn = None
     self.global_step = None
-
+    self.recurrent_out = None
   def is_training(self):
     """Returns true if the model is built for training mode"""
     return self.mode == 'train'
@@ -96,7 +90,7 @@ class SiameseModel:
     def embedding_fn(images, reuse=False):
       with slim.arg_scope(arg_scope):
         return convolutional_alexnet(images, reuse=reuse)
-    print("Exempler Size bhenchod: ")
+   
     print(self.exemplars)
     print(self.instances)
     self.exemplar_embeds, _ = embedding_fn(self.exemplars, reuse=reuse)
@@ -110,18 +104,58 @@ class SiameseModel:
     with tf.variable_scope('detection', reuse=reuse):
       def _translation_match(x, z):  # translation match for one example within a batch
         x = tf.expand_dims(x, 0)  # [1, in_height, in_width, in_channels]
-        z = tf.expand_dims(z, -1)  # [filter_height, filter_width, in_channels, 1]
-        print("Shapes bhenchod ...........")
+        z = tf.expand_dims(z, -1) # [filter_height, filter_width, in_channels, 1]
+      
         print(x.shape)
         print(z.shape)
-        print("Gaand mariiiii..............")
-        return tf.nn.conv2d(x, z, strides=[1, 1, 1, 1], padding='VALID', name='translation_match')
+        out = tf.nn.conv2d(x, z, strides=[1, 1, 1, 1], padding='VALID', name='translation_match')
+        #out = tf.reshape(out, [-1, out.shape[0], out.shape[1], out.shape[2], out.shape[3]])
+        #out = tf.squeeze(out, [0,3])
+        #print(out.shape)
+        
+        #cell = LSTMCell(256, state_is_tuple= True)
+        #cell = tf.contrib.rnn.DropoutWrapper(cell=cell, output_keep_prob=0.8)
+        #cell1 = LSTMCell(256, state_is_tuple=True ) 
+        #cell1 = tf.contrib.rnn.DropoutWrapper(cell=cell1, output_keep_prob=0.8)
+        #stack = MultiRNNCell([cell, cell1], state_is_tuple = True)
+        #net, states = tf.nn.dynamic_rnn(stack, out, dtype = tf.float32, time_major = False)
+      
+        #print(net.shape)
+      
+       
+       
+        return out
+        ''' 
+       
+         cell = LSTMCell(256, state_is_tuple= True)
+      #cell = tf.contrib.rnn.DropoutWrapper(cell=cell, output_keep_prob=0.8)
+      cell1 = LSTMCell(256, state_is_tuple=True ) 
+      #cell1 = tf.contrib.rnn.DropoutWrapper(cell=cell1, output_keep_prob=0.8)
+      stack = MultiRNNCell([cell, cell1], state_is_tuple = True)
+
+      output, states = tf.nn.dynamic_rnn(stack, output, dtype = tf.float32, time_major = False)'''
+      
+    
+
 
       output = tf.map_fn(lambda x: _translation_match(x[0], x[1]),
                          (self.instance_embeds, self.templates),
                          dtype=self.instance_embeds.dtype)
-      output = tf.squeeze(output, [1, 4])  # of shape e.g., [8, 15, 15]
-
+     # print('output shape')
+     # print(output.shape)
+      output = tf.squeeze(output, [1,4])  # of shape e.g., [8, 15, 15]
+    
+      #net = tf.reshape(net, [1,16,16,1])
+      #out = tf.reshape(out, [-1, out.shape[0], out.shape[1], out.shape[2], out.shape[3]])
+     
+        
+    #  lstm_cell = ConvLSTMCell([output.shape[1], output.shape[2]], 8, [8,8])
+       
+    #  output, state = tf.nn.dynamic_rnn(lstm_cell, output, dtype = tf.float32)
+        
+     # print(output.shape)
+     # tf.squeeze(out,3)
+     
       # Adjust score, this is required to make training possible.
       config = self.model_config['adjust_response_config']
       bias = tf.get_variable('biases', [1],
@@ -196,6 +230,7 @@ class SiameseModel:
     self.global_step = global_step
 
   def setup_embedding_initializer(self):
+
     """Sets up the function to restore embedding variables from checkpoint."""
     embed_config = self.model_config['embed_config']
     if embed_config['embedding_checkpoint_file']:
@@ -212,6 +247,7 @@ class SiameseModel:
 
   def build(self, reuse=False):
     """Creates all ops for training and evaluation"""
+    print("SETTING UP EMBEDDING INITIALIZER")
     with tf.name_scope(self.mode):
       self.build_inputs()
       self.build_image_embeddings(reuse=reuse)
@@ -221,6 +257,6 @@ class SiameseModel:
 
       if self.mode in ['train', 'validation']:
         self.build_loss()
-
+    
       if self.is_training():
-        self.setup_global_step()
+        self.setup_global_step()  

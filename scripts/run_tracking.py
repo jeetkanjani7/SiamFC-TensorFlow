@@ -1,11 +1,11 @@
-#! /usr/bin/env python
+  #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright © 2017 bily     Huazhong University of Science and Technology
 #
 # Distributed under terms of the MIT license.
 
-r"""Generate tracking results for videos using Siamese Model"""
+"""Generate tracking results for videos using Siamese Model"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -33,8 +33,8 @@ ex = Experiment()
 
 @ex.config
 def configs():
-  checkpoint = 'Logs/SiamFC/track_model_checkpoints/SiamFC-3s-color-pretrained'
-  input_files = 'assets/KiteSurf'
+  checkpoint = 'Logs/SiamFC/track_model_checkpoints/SiamFC-3s-color-scratch'
+  input_files = 'inference_data/j6'
 
 
 @ex.automain
@@ -58,7 +58,7 @@ def main(checkpoint, input_files):
   for file_pattern in input_files.split(","):
     video_dirs.extend(glob(file_pattern))
   logging.info("Running tracking on %d videos matching %s", len(video_dirs), input_files)
-
+  print('input_files -------------> ' + input_files)
   gpu_options = tf.GPUOptions(allow_growth=True)
   sess_config = tf.ConfigProto(gpu_options=gpu_options)
 

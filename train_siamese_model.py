@@ -104,6 +104,7 @@ def main(model_config, train_config, track_config):
     model.build()
     model_va = siamese_model.SiameseModel(model_config, train_config, mode='validation')
     model_va.build(reuse=True)
+
     print("MODEL BUILT SUCCESSFULLY...................")
     # Save configurations for future reference
     save_cfgs(train_dir, model_config, train_config, track_config)
@@ -111,12 +112,17 @@ def main(model_config, train_config, track_config):
     learning_rate = _configure_learning_rate(train_config, model.global_step)
     optimizer = _configure_optimizer(train_config, learning_rate)
     tf.summary.scalar('learning_rate', learning_rate)
+    trainable_var = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, "convolutional_alexnet/lstm")
+    
+    print('trainable variable')
+    print(trainable_var)
     # Set up the training ops
     opt_op = tf.contrib.layers.optimize_loss(
       loss=model.total_loss,
       global_step=model.global_step,
       learning_rate=learning_rate,
       optimizer=optimizer,
+      variables =  trainable_var,
       clip_gradients=train_config['clip_gradients'],
       learning_rate_decay_fn=None,
       summaries=['learning_rate'])

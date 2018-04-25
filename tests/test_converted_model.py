@@ -69,9 +69,11 @@ def test_load_embedding_from_mat():
 
 
 def test_load_embedding_from_converted_TF_model():
+  print("HELOOO?????????????????????????/")
+  print(PARENT_DIR)
   """Test if the embedding model loaded from converted TensorFlow checkpoint
      produces the same features as the original implementation"""
-  checkpoint = osp.join(PARENT_DIR, 'Logs/SiamFC/track_model_checkpoints/SiamFC-3s-color-pretrained')
+  checkpoint = osp.join(PARENT_DIR, 'Logs/SiamFC/track_model_checkpoints/SiamFC-3s-gray-scratch/model.ckpt-332499.data-00000-of-00001')
   test_im = osp.join(CURRENT_DIR, '01.jpg')
   gt_feat = osp.join(CURRENT_DIR, 'result.mat')
 
@@ -111,7 +113,7 @@ def test_load_embedding_from_converted_TF_model():
 
 
 def test():
-  test_load_embedding_from_mat()
+ # test_load_embedding_from_mat()
   test_load_embedding_from_converted_TF_model()
 
 

@@ -114,7 +114,8 @@ def get_subwindow_avg(im, pos, model_sz, original_sz):
   # make sure the size is not too small
   assert im_sz[0] > 2 and im_sz[1] > 2
   c = [get_center(s) for s in sz]
-
+  print('c' )
+  print(c)
   # check out-of-bounds coordinates, and set them to avg_chans
   context_xmin = np.int(np.round(pos[1] - c[1]))
   context_xmax = np.int(context_xmin + sz[1] - 1)

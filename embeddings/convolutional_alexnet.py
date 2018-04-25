@@ -103,8 +103,8 @@ def convolutional_alexnet(inputs, reuse=None, scope='convolutional_alexnet'):
   Args:
     inputs: a Tensor of shape [batch, h, w, c].
     reuse: if the weights in the embedding function are reused.
-    scope: the variable scope of the computational graph.
-
+    scope: the variable scope of the computational graph
+.
   Returns:
     net: the computed features of the inputs.
     end_points: the intermediate outputs of the embedding function.
@@ -120,9 +120,6 @@ def convolutional_alexnet(inputs, reuse=None, scope='convolutional_alexnet'):
       with tf.variable_scope('conv2'):
         b1, b2 = tf.split(net, 2, 3)
         b1 = slim.conv2d(b1, 128, [5, 5], scope='b1')
-        # The original implementation has bias terms for all convolution, but
-        # it actually isn't necessary if the convolution layer is followed by a batch
-        # normalization layer since batch norm will subtract the mean.
         b2 = slim.conv2d(b2, 128, [5, 5], scope='b2')
         net = tf.concat([b1, b2], 3)
       net = slim.max_pool2d(net, [3, 3], 2, scope='pool2')
@@ -132,39 +129,45 @@ def convolutional_alexnet(inputs, reuse=None, scope='convolutional_alexnet'):
         b1 = slim.conv2d(b1, 192, [3, 3], 1, scope='b1')
         b2 = slim.conv2d(b2, 192, [3, 3], 1, scope='b2')
         net = tf.concat([b1, b2], 3)
-      # Conv 5 with only convolution, has bias
       with tf.variable_scope('conv5'):
         with slim.arg_scope([slim.conv2d],
                             activation_fn=None, normalizer_fn=None):
           b1, b2 = tf.split(net, 2, 3)
           b1 = slim.conv2d(b1, 128, [3, 3], 1, scope='b1')
           b2 = slim.conv2d(b2, 128, [3, 3], 1, scope='b2')
-        net = tf.concat([b1, b2], 3)
+          net = tf.concat([b1, b2], 3)
        
-        print("NET SHAPE PREV >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-        print(net.shape)
-      #adding LSTM layer
-      with tf.variable_scope('lstm'):
+    with tf.variable_scope('lstm'):
        
-        net = tf.reshape(net, [net.shape[1]*net.shape[1], -1, 256])
+      net = tf.reshape(net, [net.shape[1]*net.shape[1], -1, 256])
 
-        tf.transpose(net, [0,2,1])
-        cell = LSTMCell(256, state_is_tuple= True)
-        cell = tf.contrib.rnn.DropoutWrapper(cell=cell, output_keep_prob=0.8)
-        cell1 = tf.contrib.rnn.LSTMCell(256, state_is_tuple=True)
-        cell = tf.contrib.rnn.DropoutWrapper(cell=cell, output_keep_prob=0.8)
-        stack = MultiRNNCell([cell, cell1], state_is_tuple = True)
-        net, states = tf.nn.dynamic_rnn(stack, net, dtype = tf.float32, time_major = True)
-        dim = int(net.shape[0])
-        dim = dim**(1/2)
-        print(dim)
-        net = tf.reshape(net, [int(dim),int(dim),-1, 256])
-        net = tf.transpose(net, [2,0,1,3])
-      # Convert end_points_collection into a dictionary of end_points.
-      print("NET SHAPE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-      print(net.shape)
+      tf.transpose(net, [0,2,1])
+      cell = LSTMCell(256, state_is_tuple= True)
+      cell = tf.contrib.rnn.DropoutWrapper(cell=cell, output_keep_prob=0.8)
+      cell1 = tf.contrib.rnn.LSTMCell(256, state_is_tuple=True )
+      cell1 = tf.contrib.rnn.DropoutWrapper(cell=cell1, output_keep_prob=0.8)
+      stack = MultiRNNCell([cell, cell1], state_is_tuple = True)
+      net, states = tf.nn.dynamic_rnn(stack, net, dtype = tf.float32, time_major = True)
+      
+      dim = int(net.shape[0])
+      dim = dim**(1/2)
+      
+      net = tf.reshape(net, [int(dim),int(dim),-1, 256])
+      net = tf.transpose(net, [2,0,1,3])
+        # Convert end_points_collection into a dictionary of end_points.
       end_points = slim.utils.convert_collection_to_dict(end_points_collection)
       return net, end_points
 
-
+        
+      print("NET SHAPE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+      print(net.shape)
+   
+       
+      print("NET SHAPE PREV >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+      print(net.shape)
+    
+        
+      
+     
+      
 convolutional_alexnet.stride = 8

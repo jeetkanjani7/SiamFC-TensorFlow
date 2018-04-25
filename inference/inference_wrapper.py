@@ -53,7 +53,8 @@ class InferenceWrapper():
         variables_to_restore_filterd[key] = value
 
     saver = tf.train.Saver(variables_to_restore_filterd)
-
+    for s in variables_to_restore:
+      print(s)
     if osp.isdir(checkpoint_path):
       checkpoint_path = tf.train.latest_checkpoint(checkpoint_path)
       if not checkpoint_path:

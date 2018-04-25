@@ -5,7 +5,7 @@
 #
 # Distributed under terms of the MIT license.
 
-r"""Support integration with OTB benchmark"""
+"""Support integration with OTB benchmark"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -22,7 +22,7 @@ import tensorflow as tf
 CODE_ROOT = '/path/to/SiamFC-TensorFlow'
 
 # Checkpoint for evaluation
-CHECKPOINT = '/path/to/SiamFC-TensorFlow/Logs/SiamFC/track_model_checkpoints/SiamFC-3s-color-pretrained'
+CHECKPOINT = '/path/to/SiamFC-TensorFlow/Logs/SiamFC/track_model_checkpoints/SiamFC-3s-gray-scratch'
 
 sys.path.insert(0, CODE_ROOT)
 

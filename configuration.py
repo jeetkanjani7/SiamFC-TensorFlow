@@ -24,7 +24,7 @@ MODEL_CONFIG = {
   'z_image_size': 127,  # Exemplar image size
 
   'embed_config': {'embedding_name': 'convolutional_alexnet',
-                   'embedding_checkpoint_file': None,  # mat file path of the pretrained embedding model.
+                   'embedding_checkpoint_file': './assets/2016-08-17.net.mat',  # mat file path of the pretrained embedding model.
                    'train_embedding': True,
                    'init_method': 'kaiming_normal',
                    'use_bn': True,

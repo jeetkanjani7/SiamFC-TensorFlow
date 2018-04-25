@@ -1,11 +1,3 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# Copyright © 2017 bily     Huazhong University of Science and Technology
-#
-# Distributed under terms of the MIT license.
-"""Class for tracking using a track model."""
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -50,6 +42,7 @@ class Tracker(object):
   def track(self, sess, first_bbox, frames, logdir='/tmp'):
     """Runs tracking on a single image sequence."""
     # Get initial target bounding box and convert to center based
+    print('first bbox  -------------------------> '+ str(first_bbox))
     bbox = convert_bbox_format(first_bbox, 'center-based')
 
     # Feed in the first frame image to set initial state.
@@ -72,6 +65,7 @@ class Tracker(object):
     # Run tracking loop
     reported_bboxs = []
     for i, filename in enumerate(frames):
+      
       if i > 0 or include_first:  # We don't really want to process the first image unless intended to do so.
         bbox_feed = [current_target_state.bbox.y, current_target_state.bbox.x,
                      current_target_state.bbox.height, current_target_state.bbox.width]

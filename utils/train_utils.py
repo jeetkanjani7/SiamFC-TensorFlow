@@ -60,7 +60,8 @@ def construct_gt_score_maps(response_size, batch_size, stride, gt_config=None):
 
 def get_params_from_mat(matpath):
   """Get parameter from .mat file into parms(dict)"""
-
+  print(matpath)
+  print('----------------------------------------------------------------------------------------')
   def squeeze(vars_):
     # Matlab save some params with shape (*, 1)
     # However, we don't need the trailing dimension in TensorFlow.
@@ -68,13 +69,14 @@ def get_params_from_mat(matpath):
       return [np.squeeze(v, 1) for v in vars_]
     else:
       return np.squeeze(vars_, 1)
-
+  
   netparams = sio.loadmat(matpath)["net"]["params"][0][0]
   params = dict()
-
+  print(netparams.size)
   for i in range(netparams.size):
     param = netparams[0][i]
     name = param["name"][0]
+    print(name)
     value = param["value"]
     value_size = param["value"].shape[0]
 
@@ -154,12 +156,14 @@ def get_params_from_mat(matpath):
       elif types == 'b':
         params['conv%d/b1/biases' % layer] = b1
         params['conv%d/b2/biases' % layer] = b2
-
+    elif layer in [6]:
+      print('value shape: '+ str(value.shape))    
   return params
 
 
 def load_mat_model(matpath, embed_scope, detection_scope=None):
-  """Restore SiameseFC models from .mat model files"""
+  
+  print('loading mat model..................................................')
   params = get_params_from_mat(matpath)
 
   assign_ops = []
@@ -180,7 +184,7 @@ def load_mat_model(matpath, embed_scope, detection_scope=None):
       _assign('conv%d/BatchNorm/moving_mean' % l, params)
       _assign('conv%d/BatchNorm/moving_variance' % l, params)
     elif l in [2, 4]:
-      # Branch 1
+
       _assign('conv%d/b1/weights' % l, params)
       # _assign('conv%d/b1/biases' % l, params)
       _assign('conv%d/b1/BatchNorm/beta' % l, params)
@@ -201,8 +205,11 @@ def load_mat_model(matpath, embed_scope, detection_scope=None):
       # Branch 2
       _assign('conv%d/b2/weights' % l, params)
       _assign('conv%d/b2/biases' % l, params)
+    elif l in[6]:
+      _assign('lstm/weights')
+      _assign('lstm/biases')
     else:
-      raise Exception('layer number must below 5')
+      raise Exception('layer number must below 6')
 
   if detection_scope:
     _assign(detection_scope + 'biases', params, scope='')

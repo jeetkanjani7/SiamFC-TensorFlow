@@ -1,10 +1,3 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# Copyright © 2017 bily     Huazhong University of Science and Technology
-#
-# Distributed under terms of the MIT license.
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -78,8 +71,7 @@ def process_split(root_dir, save_dir, split, subdir='', ):
         track_save_dir = get_track_save_directory(save_dir, 'train', subdir, video)
         mkdir_p(track_save_dir)
         savename = osp.join(track_save_dir, '{}.{:02d}.crop.x.jpg'.format(filename, int(id)))
-        if osp.isfile(savename): 
-          continue  # skip existing images
+        if osp.isfile(savename): continue  # skip existing images
 
         if img is None:
           img = imread(img_file)
@@ -89,8 +81,10 @@ def process_split(root_dir, save_dir, split, subdir='', ):
         crop, _ = get_crops(img, target_box,
                             size_z=127, size_x=255,
                             context_amount=0.5, )
-        
+
         imwrite(savename, crop, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+
+
 
 
 if __name__ == '__main__':
@@ -105,9 +99,9 @@ if __name__ == '__main__':
   one_work = lambda a, b: process_split(vid_dir, save_dir, a, b)
 
   results = []
-  results.append(pool.apply_async(one_work, ['val', '']))
-  results.append(pool.apply_async(one_work, ['train', 'ILSVRC2015_VID_train_00000000']))
-  results.append(pool.apply_async(one_work, ['train', 'ILSVRC2015_VID_train_00001000']))
-  results.append(pool.apply_async(one_work, ['train', 'ILSVRC2015_VID_train_00002000']))
-  results.append(pool.apply_async(one_work, ['train', 'ILSVRC2015_VID_train_00003000']))
+#  results.append(pool.apply_async(one_work, ['val', '']))
+  results.append(pool.apply_async(one_work, ['train', 'ILSVRC2015_VID_train_0000']))
+  results.append(pool.apply_async(one_work, ['train', 'ILSVRC2015_VID_train_0001']))
+  results.append(pool.apply_async(one_work, ['train', 'ILSVRC2015_VID_train_0002']))
+  results.append(pool.apply_async(one_work, ['train', 'ILSVRC2015_VID_train_0003']))
   ans = [res.get() for res in results]

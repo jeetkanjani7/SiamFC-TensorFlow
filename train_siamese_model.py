@@ -116,7 +116,7 @@ def main(model_config, train_config, track_config):
     
     print('trainable variable')
     print(trainable_var)
-    # Set up the training ops
+
     opt_op = tf.contrib.layers.optimize_loss(
       loss=model.total_loss,
       global_step=model.global_step,

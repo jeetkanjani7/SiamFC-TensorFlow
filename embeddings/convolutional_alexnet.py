@@ -136,10 +136,17 @@ def convolutional_alexnet(inputs, reuse=None, scope='convolutional_alexnet'):
           b1 = slim.conv2d(b1, 128, [3, 3], 1, scope='b1')
           b2 = slim.conv2d(b2, 128, [3, 3], 1, scope='b2')
           net = tf.concat([b1, b2], 3)
-       
+          print("NET SHAPE PREV >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+          print(net.shape)
+    
+         # end_points = slim.utils.convert_collection_to_dict(end_points_collection)
+         # return net, end_points
     with tf.variable_scope('lstm'):
        
-      net = tf.reshape(net, [net.shape[1]*net.shape[1], -1, 256])
+      net = tf.reshape(net, [-1, net.shape[1]*net.shape[1],  256])
+      print("NET SHAPE PREV >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+      print(net.shape)
+    
 
       tf.transpose(net, [0,2,1])
       cell = LSTMCell(256, state_is_tuple= True)
@@ -149,7 +156,7 @@ def convolutional_alexnet(inputs, reuse=None, scope='convolutional_alexnet'):
       stack = MultiRNNCell([cell, cell1], state_is_tuple = True)
       net, states = tf.nn.dynamic_rnn(stack, net, dtype = tf.float32, time_major = True)
       
-      dim = int(net.shape[0])
+      dim = int(net.shape[1])
       dim = dim**(1/2)
       
       net = tf.reshape(net, [int(dim),int(dim),-1, 256])
@@ -163,9 +170,7 @@ def convolutional_alexnet(inputs, reuse=None, scope='convolutional_alexnet'):
       print(net.shape)
    
        
-      print("NET SHAPE PREV >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-      print(net.shape)
-    
+     
         
       
      

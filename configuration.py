@@ -1,15 +1,3 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# Copyright @ 2017 bily     Huazhong University of Science and Technology
-#
-
-"""Default configurations of model specification, training and tracking
-
-For most of the time, DO NOT modify the configurations within this file.
-Use the configurations here as the default configurations and only update
-them following the examples in the `experiments` directory.
-"""
 
 from __future__ import absolute_import
 from __future__ import division
